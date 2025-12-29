@@ -27,5 +27,7 @@
 }
 
 body {
-  font-family: 'Signika';
+  font-family: "Signika";
+  background-color: #0c151d;
+  color: #fff4ce;
 }
