@@ -31,3 +31,13 @@ body {
   background-color: #0c151d;
   color: #fff4ce;
 }
+
+::selection {
+  background-color: #ffd54f;
+  
+}
+
+::-moz-selection {
+  background-color: #ffd54f;
+  color: #1a1a1a;
+}
