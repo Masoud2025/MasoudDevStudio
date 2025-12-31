@@ -2,15 +2,15 @@
 
 
 @font-face {
-  font-family: "Signika";
-  src: url("/fonts/Signika_Negative/static/SignikaNegative-Bold.ttf")
+  font-family: "Morabba";
+  src: url("/fonts/Morabba/ttf/Morabba-Black.ttf")
     format("truetype");
   font-weight: 900;
   font-style: normal;
 }
 
 body {
-  font-family: "Signika";
+  font-family: "Morabba";
 
 }
 
