@@ -1,23 +1,6 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 @font-face {
   font-family: "Signika";
   src: url("/fonts/Signika_Negative/static/SignikaNegative-Bold.ttf")
@@ -28,16 +11,17 @@
 
 body {
   font-family: "Signika";
-  background-color: #0c151d;
-  color: #fff4ce;
+
 }
 
 ::selection {
   background-color: #ffd54f;
-  
 }
 
 ::-moz-selection {
   background-color: #ffd54f;
   color: #1a1a1a;
 }
+
+/*  */
+
