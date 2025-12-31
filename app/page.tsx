@@ -1,7 +1,11 @@
+import ConsoleBanner from "../components/ConsoleBanner";
+
 export default function Home() {
+  
   return (
     <div className="flex flex-col min-h-screen items-center justify-center text-4xl ">
       <h1>مسعود جعفری</h1>
+            <ConsoleBanner />
     </div>
   );
 }
