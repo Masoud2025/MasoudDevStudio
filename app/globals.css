@@ -1,19 +1,24 @@
 @import "tailwindcss";
 
-
 @font-face {
   font-family: "Morabba";
-  src: url("/fonts/Morabba/ttf/Morabba-Black.ttf")
-    format("truetype");
+  src: url("/fonts/Morabba/ttf/Morabba-Black.ttf") format("truetype");
   font-weight: 900;
   font-style: normal;
 }
-
-body {
-  font-family: "Morabba";
-
+@font-face {
+  font-family: "Anjoman";
+  src: url("/fonts/Anjoman/Anjoman-Medium/fonts/Anjoman-Medium.ttf")
+    format("truetype");
+  font-weight: 500;
+  font-style: normal;
 }
-
+body {
+  font-family: "Anjoman";
+}
+#LOGO {
+  font-family: "Morabba";
+}
 ::selection {
   background-color: #ffd54f;
 }
@@ -24,4 +29,3 @@ body {
 }
 
 /*  */
-
