@@ -44,7 +44,7 @@ function TiltCard({
   const ref = useRef<HTMLDivElement>(null);
   const raf = useRef<number>(0);
 
-  // برای نرم شدن: مقدار فعلی و مقدار هدف
+  //   For smooth behavior current value and Target Value 
   const cur = useRef({ rx: 0, ry: 0, tz: 0 });
   const target = useRef({ rx: 0, ry: 0, tz: 0 });
 
@@ -52,7 +52,7 @@ function TiltCard({
     const el = ref.current;
     if (!el) return;
 
-    // easing ساده (lerp)
+    // easing simple (lerp)
     cur.current.rx += (target.current.rx - cur.current.rx) * 0.14;
     cur.current.ry += (target.current.ry - cur.current.ry) * 0.14;
     cur.current.tz += (target.current.tz - cur.current.tz) * 0.14;
@@ -74,12 +74,12 @@ function TiltCard({
     const x = clamp((e.clientX - r.left) / r.width, 0, 1);
     const y = clamp((e.clientY - r.top) / r.height, 0, 1);
 
-    // مرکز کارت: 0.5 / 0.5
+    // Center of the card: 0.5 / 0.5
     const dx = (x - 0.5) * 2; // -1..1
     const dy = (y - 0.5) * 2; // -1..1
 
-    target.current.ry = dx * maxTilt; // حرکت افقی -> rotateY
-    target.current.rx = dy * -maxTilt; // حرکت عمودی -> rotateX (برعکس برای طبیعی شدن)
+    target.current.ry = dx * maxTilt; // Horizontal movement-> rotateY
+    target.current.rx = dy * -maxTilt; // Vertical movement  -> rotateX (reverse for natural view )
     target.current.tz = -lift;
 
     schedule();
@@ -173,7 +173,7 @@ export default function Hero() {
             <span className="mono">React / Next.js / TypeScript</span>
           </div>
 
-          <h1 className="title">
+          <h1 className="title MorabaFont">
             رابط کاربری که هم زیباست،
             <span className="accent"> هم سریع</span>.
           </h1>

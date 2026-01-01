@@ -148,7 +148,7 @@ export default function Contact() {
 
       <div className="wrap">
         <div className="head">
-          <h2>تماس</h2>
+          <h2 className="MorabaFont">تماس</h2>
           <p>همه فیلدها باید کامل و درست پر بشن؛ در غیر این صورت ارسال انجام نمی‌شه.</p>
         </div>
 

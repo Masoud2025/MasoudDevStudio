@@ -13,10 +13,13 @@
   font-weight: 500;
   font-style: normal;
 }
+:root {
+  --base-bg: linear-gradient(180deg, #ffffff, #f7f9ff 55%, #ffffff);
+}
 body {
   font-family: "Anjoman";
 }
-#LOGO {
+.MorabaFont {
   font-family: "Morabba";
 }
 ::selection {

@@ -89,9 +89,9 @@ export default function Navbar() {
           </div>
 
           {/* Right: name + logo + hamburger */}
-          <div className="relative flex items-center gap-3">
-            <div className="hidden sm:flex flex-col text-right font-semibold text-sm md:text-base leading-5 text-gray-900">
-              <span>مسعود جعفری</span>
+          <div className="relative flex items-center gap-3 ">
+            <div className="hidden sm:flex flex-col text-right font-semibold text-sm md:text-base leading-5 text-gray-900 ">
+              <span className="MorabaFont">مسعود جعفری</span>
               <span className="text-gray-700 font-medium">برنامه نویس</span>
             </div>
 
