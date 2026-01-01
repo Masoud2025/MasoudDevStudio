@@ -3,7 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import Logo from "../public/icons/MainLogo.png";
 import GithubLogo from "../public/icons/github.svg";
 import Linkedin from "../public/icons/linkedin.svg";
@@ -18,119 +19,200 @@ export default function Navbar() {
     { href: "/#contact", label: "تماس" },
   ];
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  const toggleMenu = () => setMenuOpen((v) => !v);
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <header className="bg-white shadow-2xl rounded-4xl py-1 px-4  fixed w-full z-50">
-      <nav className="mx-auto max-w-6xl px-1 py-0.5  flex items-center justify-between">
-        {/* چپ: شبکه‌های اجتماعی */}
-        <div className="flex gap-3">
-          <Link
-            href="https://github.com/USERNAME"
-            target="_blank"
-            rel="noreferrer"
-            className="p-2 rounded-full hover:bg-gray-100 transition"
-            aria-label="GitHub"
-          >
-            <Image src={GithubLogo} alt="GitHub" width={24} height={24} />
-          </Link>
-          <Link
-            href="https://linkedin.com/in/USERNAME"
-            target="_blank"
-            rel="noreferrer"
-            className="p-2 rounded-full hover:bg-gray-100 transition"
-            aria-label="LinkedIn"
-          >
-            <Image src={Linkedin} alt="LinkedIn" width={24} height={24} />
-          </Link>
-        </div>
-
-        {/* وسط: لینک‌ها */}
-        <div className="hidden md:flex gap-8 font-medium text-gray-700">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="relative group px-1 py-1 hover:text-blue-600 transition"
-            >
-              {link.label}
-              <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
-            </Link>
-          ))}
-        </div>
-
-        {/* Right side  */}
-        <div className="flex items-center gap-3" id="LOGO">
-          <div className="flex flex-col text-right font-semibold text-sm md:text-base">
-            <span>مسعود جعفری</span>
-            <span>برنامه نویس</span>
-          </div>
-
-          <Image
-            src={Logo}
-            width={120}
-            height={40}
-            alt="لوگو سایت"
-            className="hidden md:block"
+    <header className="fixed inset-x-0 top-3 z-50">
+      {/* Glass container */}
+      <div className="mx-auto max-w-6xl px-3">
+        <nav
+          className="
+            relative flex items-center justify-between
+            rounded-2xl px-4 py-2
+            bg-white/10 backdrop-blur-xl
+            border border-white/20
+            shadow-[0_10px_30px_rgba(0,0,0,0.12)]
+          "
+        >
+          {/* subtle gradient overlay to look premium */}
+          <div
+            className="pointer-events-none absolute inset-0 rounded-2xl
+            bg-gradient-to-b from-white/20 to-white/5"
           />
 
-          {/* Mobile hamburger menu  */}
-          <button
-            className="md:hidden flex flex-col justify-between h-5 w-6 ml-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="منوی موبایل"
-          >
-            <span
-              className="block h-0.5 w-full bg-black rounded transition-transform"
-              style={{
-                transform: menuOpen ? "rotate(45deg) translateY(7px)" : "none",
-              }}
-            ></span>
-            <span
-              className={`block h-0.5 w-full bg-black rounded transition-opacity ${
-                menuOpen ? "opacity-0" : "opacity-100"
-              }`}
-            ></span>
-            <span
-              className="block h-0.5 w-full bg-black rounded transition-transform"
-              style={{
-                transform: menuOpen
-                  ? "rotate(-45deg) translateY(-7px)"
-                  : "none",
-              }}
-            ></span>
-          </button>
-        </div>
-      </nav>
-      <Image
-        src={Logo}
-        width={80}
-        height={40}
-        alt="لوگو سایت"
-        className=" block mx-auto md:hidden mt-[-4rem] "
-      />
-      {/* Mobile menu open up Framer Motion */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white shadow-lg"
-          >
-            <div className="flex flex-col px-6 py-4 gap-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="py-2 text-right text-gray-700 hover:bg-gray-100 rounded transition"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
+          {/* Left: social */}
+          <div className="relative flex gap-2">
+            <Link
+              href="https://github.com/USERNAME"
+              target="_blank"
+              rel="noreferrer"
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 transition"
+              aria-label="GitHub"
+            >
+              <Image src={GithubLogo} alt="GitHub" width={22} height={22} />
+            </Link>
+
+            <Link
+              href="https://linkedin.com/in/USERNAME"
+              target="_blank"
+              rel="noreferrer"
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 transition"
+              aria-label="LinkedIn"
+            >
+              <Image src={Linkedin} alt="LinkedIn" width={22} height={22} />
+            </Link>
+          </div>
+
+          {/* Center: desktop links */}
+          <div className="relative hidden md:flex md:flex-row-reverse gap-7 text-[15px] font-medium text-gray-800">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="
+                  relative px-2 py-1 rounded-lg
+                  hover:bg-white/20 transition
+                "
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Right: name + logo + hamburger */}
+          <div className="relative flex items-center gap-3">
+            <div className="hidden sm:flex flex-col text-right font-semibold text-sm md:text-base leading-5 text-gray-900">
+              <span>مسعود جعفری</span>
+              <span className="text-gray-700 font-medium">برنامه نویس</span>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            <Image
+              src={Logo}
+              width={110}
+              height={40}
+              alt="Site logo"
+              className="hidden md:block"
+              priority
+            />
+
+            <button
+              className="
+                md:hidden inline-flex items-center justify-center
+                h-10 w-10 rounded-xl
+                bg-white/10 hover:bg-white/20
+                border border-white/15 transition
+              "
+              onClick={toggleMenu}
+              aria-label="Mobile menu"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+            >
+              <div className="flex flex-col justify-between h-4 w-5">
+                <span
+                  className="block h-0.5 w-full bg-gray-900 rounded transition-transform"
+                  style={{
+                    transform: menuOpen
+                      ? "rotate(45deg) translateY(6px)"
+                      : "none",
+                  }}
+                />
+                <span
+                  className={`block h-0.5 w-full bg-gray-900 rounded transition-opacity ${
+                    menuOpen ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+                <span
+                  className="block h-0.5 w-full bg-gray-900 rounded transition-transform"
+                  style={{
+                    transform: menuOpen
+                      ? "rotate(-45deg) translateY(-6px)"
+                      : "none",
+                  }}
+                />
+              </div>
+            </button>
+          </div>
+        </nav>
+
+        {/* Mobile menu (glass + smooth) */}
+        <AnimatePresence initial={false}>
+          {menuOpen && (
+            <>
+              {/* backdrop click to close */}
+              <motion.button
+                aria-label="Close menu backdrop"
+                className="fixed inset-0 top-0 z-40 bg-black/20 backdrop-blur-[2px] md:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={closeMenu}
+              />
+
+              <motion.div
+                id="mobile-menu"
+                className="
+                  relative z-50 md:hidden mt-3
+                  overflow-hidden rounded-2xl
+                  bg-white/10 backdrop-blur-xl
+                  border border-white/20
+                  shadow-[0_10px_30px_rgba(0,0,0,0.12)]
+                "
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 28,
+                  opacity: { duration: 0.15 },
+                }}
+              >
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <Image
+                      src={Logo}
+                      width={84}
+                      height={36}
+                      alt="Site logo"
+                      className="opacity-95"
+                    />
+                    <span className="text-sm text-gray-800 font-semibold">
+                      منو
+                    </span>
+                  </div>
+
+                  <div className="mt-3 flex flex-col gap-2">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={closeMenu}
+                        className="
+                          text-right px-3 py-2 rounded-xl
+                          text-gray-900
+                          bg-white/10 hover:bg-white/20
+                          border border-white/10 transition
+                        "
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </div>
     </header>
   );
 }
