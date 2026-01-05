@@ -457,10 +457,7 @@ export default function Project() {
       <div className="wrap">
         <div className="head">
           <h2 className="MorabaFont">پروژه‌ها</h2>
-          <p>
-            برای روان شدن، انیمیشن‌ها فقط transform/opacity هستند و عکس‌ها lazy
-            لود می‌شن.
-          </p>
+          
         </div>
 
         <div className="cards">

@@ -11,13 +11,13 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen   ">
       <Navbar />
-      <Hero/>
-      <Project/>
-      <Contact/>
-      <Footer/>
+      <Hero />
+      <Project />
+      <Contact />
+      <Footer />
       <ConsoleBanner />
-      <ScrollProgressBar/>
-      <BackToTopTopBar/>
+      <ScrollProgressBar />
+      <BackToTopTopBar />
     </div>
   );
 }
