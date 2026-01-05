@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import HeroImage from "../public/Code typing-bro.svg";
+import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import HeroImage from "../public/giphy.gif";
 
 type CSSVars = React.CSSProperties & Record<`--${string}`, string | number>;
 
@@ -24,9 +25,6 @@ function usePrefersReducedMotion() {
 
   return reduced;
 }
-
-const clamp = (n: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, n));
 
 function useTypewriter({
   words,
@@ -58,7 +56,6 @@ function useTypewriter({
     }
 
     if (deleting && sub === 0) {
-      // eslint/react-hooks: avoid synchronous setState inside effect body [web:4]
       const t = window.setTimeout(() => {
         setDeleting(false);
         setIndex((i) => {
@@ -93,92 +90,8 @@ function useTypewriter({
   return { text, deleting, wordIndex: index };
 }
 
-function Orbits({
-  rings = [
-    {
-      count: 10,
-      radius: "clamp(150px, 26vw, 220px)",
-      dur: "9s",
-      tilt: "68deg",
-    },
-    {
-      count: 7,
-      radius: "clamp(115px, 20vw, 170px)",
-      dur: "12s",
-      tilt: "78deg",
-    },
-  ],
-}: {
-  rings?: Array<{ count: number; radius: string; dur: string; tilt: string }>;
-}) {
-  return (
-    <>
-      {rings.map((r, ringIdx) => (
-        <div
-          key={ringIdx}
-          className={`ring ${ringIdx === 0 ? "ring1" : "ring2"}`}
-          style={
-            {
-              ["--count"]: r.count,
-              ["--radius"]: r.radius,
-              ["--dur"]: r.dur,
-              ["--tilt"]: r.tilt,
-            } as CSSVars
-          }
-          aria-hidden="true"
-        >
-          {Array.from({ length: r.count }).map((_, i) => (
-            <span
-              key={i}
-              className="orb"
-              style={{ ["--i"]: i } as CSSVars}
-            />
-          ))}
-        </div>
-      ))}
-    </>
-  );
-}
-
 export default function Hero() {
-  const ref = useRef<HTMLElement>(null);
   const reducedMotion = usePrefersReducedMotion();
-
-  const [mx, setMx] = useState(0.5);
-  const [my, setMy] = useState(0.5);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    let raf = 0;
-    const onMove = (e: MouseEvent) => {
-      const r = el.getBoundingClientRect();
-      const x = clamp((e.clientX - r.left) / r.width, 0, 1);
-      const y = clamp((e.clientY - r.top) / r.height, 0, 1);
-
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        setMx(x);
-        setMy(y);
-      });
-    };
-
-    el.addEventListener("mousemove", onMove, { passive: true });
-    return () => {
-      cancelAnimationFrame(raf);
-      el.removeEventListener("mousemove", onMove);
-    };
-  }, []);
-
-  const styleVars: CSSVars = useMemo(() => {
-    const glowX = 18 + mx * 64;
-    const glowY = 16 + my * 64;
-    return {
-      "--glowX": `${glowX}%`,
-      "--glowY": `${glowY}%`,
-    };
-  }, [mx, my]);
 
   const roles = useMemo(
     () => ["برنامه نویس", "توسعه دهنده وب", "Frontend Developer", "React / Next.js"],
@@ -194,17 +107,10 @@ export default function Hero() {
     enabled: !reducedMotion,
   });
 
-  // اگر SVG شما به صورت کامپوننت (SVGR) ایمپورت می‌شود، این را true کن:
-  const SVG_AS_COMPONENT = false;
+  const styleVars: CSSVars = useMemo(() => ({}), []);
 
   return (
-    <section
-      ref={ref}
-      dir="rtl"
-      className="hero2"
-      style={styleVars}
-      aria-label="Hero"
-    >
+    <section dir="rtl" className="hero2" style={styleVars} aria-label="Hero">
       <div className="mesh" aria-hidden="true" />
       <div className="grid" aria-hidden="true" />
       <div className="noise" aria-hidden="true" />
@@ -213,11 +119,8 @@ export default function Hero() {
         <div className="copy">
           <div className="badge">
             <span className="ping" aria-hidden="true" />
-            <span className="bTxt">Available for freelance</span>
-            <span className="bSep" aria-hidden="true">
-              •
-            </span>
-            <span className="mono">React / Next.js / TypeScript</span>
+            <span className="bTxt">OPEN TO WORK</span>
+            
           </div>
 
           <h1 className="title MorabaFont">
@@ -233,8 +136,8 @@ export default function Hero() {
           </p>
 
           <p className="desc">
-            تمرکز روی نتیجه: کامپوننت‌های تمیز، تجربه کاربری روان، و کدی که
-            بعداً هم قابل توسعه و نگهداری باشد.
+            تمرکز روی نتیجه: کامپوننت‌های تمیز، تجربه کاربری روان، و کدی که بعداً هم
+            قابل توسعه و نگهداری باشد.
           </p>
 
           <div className="ctaRow">
@@ -257,32 +160,18 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* NEW stage: Image + orbiting 3D-ish dots */}
         <div className="stage" aria-label="Hero visuals">
           <div className="solar">
-            <div className="blob" aria-hidden="true" />
+            {/* blob + ringsStatic حذف شدند */}
 
             <div className="center" aria-label="Illustration">
-              {SVG_AS_COMPONENT ? (
-               
-                <HeroImage className="heroSvg" aria-hidden="true" />
-              ) : (
-                <img
-                  className="heroSvg"
-                  src={(HeroImage as { src: string }).src}
-                  alt="Code typing illustration"
-                />
-              )}
+              <Image
+                className="heroSvg rounded-4xl"
+                src={HeroImage}
+                alt="Code typing illustration"
+                priority
+              />
             </div>
-
-            {!reducedMotion && <Orbits />}
-            {reducedMotion && (
-              <div className="ringsStatic" aria-hidden="true">
-                <span className="orbStatic" />
-                <span className="orbStatic" />
-                <span className="orbStatic" />
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -479,98 +368,35 @@ const css = `
   z-index: 2;
 }
 
+/* حذف کامل سایه دور عکس */
 .heroSvg{
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 26px 70px rgba(15,23,42,0.20));
+  filter: none; /* drop-shadow حذف شد [web:65] */
 }
-
-.blob{
-  position:absolute;
-  inset: -40px -60px -40px -60px;
-  background:
-    radial-gradient(320px 240px at var(--glowX) var(--glowY), rgba(14,165,233,0.28), transparent 62%),
-    radial-gradient(340px 260px at 78% 42%, rgba(99,102,241,0.26), transparent 62%),
-    radial-gradient(340px 280px at 55% 82%, rgba(16,185,129,0.20), transparent 62%);
-  filter: blur(18px);
-  opacity: 0.78;
-  z-index: 0;
-}
-
-/* ---- 3D-ish orbit rings ---- */
-.ring{
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  pointer-events: none;
-  z-index: 1;
-  transform: perspective(900px) rotateX(var(--tilt)) rotateZ(0deg);
-  animation: spin var(--dur) linear infinite;
-  will-change: transform;
-}
-
-.ring2{
-  animation-direction: reverse;
-  transform: perspective(900px) rotateX(var(--tilt)) rotateZ(18deg);
-}
-
-.orb{
-  --size: clamp(8px, 1.4vw, 14px);
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 999px;
-  transform:
-    rotate(calc((360deg / var(--count)) * var(--i)))
-    translateX(var(--radius))
-    translateZ(22px);
-
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.35) 35%, rgba(79,70,229,0.45));
-  box-shadow:
-    0 0 0 4px rgba(79,70,229,0.10),
-    0 18px 40px rgba(15,23,42,0.18);
-}
-
-@keyframes spin{
-  to{
-    transform: perspective(900px) rotateX(var(--tilt)) rotateZ(360deg);
-  }
-}
-
-/* fallback ساده در reduce motion */
-.ringsStatic{
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-.orbStatic{
-  position: absolute;
-  width: 12px; height: 12px; border-radius: 999px;
-  background: rgba(79,70,229,0.35);
-  box-shadow: 0 14px 40px rgba(15,23,42,0.18);
-}
-.orbStatic:nth-child(1){ left: 12%; top: 46%; }
-.orbStatic:nth-child(2){ left: 76%; top: 20%; }
-.orbStatic:nth-child(3){ left: 84%; top: 72%; }
 
 /* responsive */
 @media (max-width: 960px){
   .container{ grid-template-columns: 1fr; }
   .stage{ min-height: auto; margin-top: 10px; }
+
+  /* اگر همین‌ها هم “کادر” می‌سازند، می‌تونی خاموش کنی */
+  /* .mesh, .grid, .noise { display: none; } */
+
+  .badge{ box-shadow: none; }  /* box-shadow: none [web:57] */
+  .ping{ box-shadow: none; }
+  .glass{ backdrop-filter: none; }
+  .pill{ backdrop-filter: none; }
 }
+
 @media (max-width: 520px){
   .badge{ gap: 8px; }
   .bTxt{ display:none; }
 }
 
-/* Respect user motion preferences */
 @media (prefers-reduced-motion: reduce){
   .btn{ transition:none; }
   .typeLine .caret{ animation:none; }
-  .ring{ animation: none; }
 }
 `;
