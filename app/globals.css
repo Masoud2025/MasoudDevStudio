@@ -46,4 +46,9 @@ body {
 }
 
 /*  */
+.typeLine .role{
+  font-family: inherit; /* یا MorabaFont */
+  font-weight: 700;
+  color: rgba(15,23,42,0.86);
+}
 

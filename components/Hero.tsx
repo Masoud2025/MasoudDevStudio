@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import HeroImage from "../public/Code typing-bro.svg";
 
 type CSSVars = React.CSSProperties & Record<`--${string}`, string | number>;
 
@@ -51,21 +52,22 @@ function useTypewriter({
   useEffect(() => {
     if (!enabled) return;
 
-    // finished typing current word -> hold, then start deleting
     if (!deleting && sub === current.length) {
       const t = window.setTimeout(() => setDeleting(true), holdMs);
       return () => window.clearTimeout(t);
     }
 
-    // finished deleting -> next word
     if (deleting && sub === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDeleting(false);
-      setIndex((i) => {
-        const next = i + 1;
-        return loop ? next % words.length : Math.min(next, words.length - 1);
-      });
-      return;
+      // eslint/react-hooks: avoid synchronous setState inside effect body [web:4]
+      const t = window.setTimeout(() => {
+        setDeleting(false);
+        setIndex((i) => {
+          const next = i + 1;
+          return loop ? next % words.length : Math.min(next, words.length - 1);
+        });
+      }, 0);
+
+      return () => window.clearTimeout(t);
     }
 
     const speed = deleting ? deleteSpeed : typeSpeed;
@@ -91,83 +93,50 @@ function useTypewriter({
   return { text, deleting, wordIndex: index };
 }
 
-function TiltCard({
-  children,
-  className,
-  maxTilt = 10,
-  perspective = 900,
-  lift = 6,
+function Orbits({
+  rings = [
+    {
+      count: 10,
+      radius: "clamp(150px, 26vw, 220px)",
+      dur: "9s",
+      tilt: "68deg",
+    },
+    {
+      count: 7,
+      radius: "clamp(115px, 20vw, 170px)",
+      dur: "12s",
+      tilt: "78deg",
+    },
+  ],
 }: {
-  children: React.ReactNode;
-  className?: string;
-  maxTilt?: number;
-  perspective?: number;
-  lift?: number;
+  rings?: Array<{ count: number; radius: string; dur: string; tilt: string }>;
 }) {
-  const reducedMotion = usePrefersReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const raf = useRef<number>(0);
-
-  const cur = useRef({ rx: 0, ry: 0, tz: 0 });
-  const target = useRef({ rx: 0, ry: 0, tz: 0 });
-
-  const apply = () => {
-    const el = ref.current;
-    if (!el) return;
-
-    cur.current.rx += (target.current.rx - cur.current.rx) * 0.14;
-    cur.current.ry += (target.current.ry - cur.current.ry) * 0.14;
-    cur.current.tz += (target.current.tz - cur.current.tz) * 0.14;
-
-    el.style.transform = `perspective(${perspective}px) rotateX(${cur.current.rx}deg) rotateY(${cur.current.ry}deg) translateY(${cur.current.tz}px)`;
-  };
-
-  const schedule = () => {
-    cancelAnimationFrame(raf.current);
-    raf.current = requestAnimationFrame(apply);
-  };
-
-  const onMove = (e: React.PointerEvent) => {
-    if (reducedMotion) return;
-    const el = ref.current;
-    if (!el) return;
-
-    const r = el.getBoundingClientRect();
-    const x = clamp((e.clientX - r.left) / r.width, 0, 1);
-    const y = clamp((e.clientY - r.top) / r.height, 0, 1);
-
-    const dx = (x - 0.5) * 2; // -1..1
-    const dy = (y - 0.5) * 2; // -1..1
-
-    target.current.ry = dx * maxTilt;
-    target.current.rx = dy * -maxTilt;
-    target.current.tz = -lift;
-
-    schedule();
-  };
-
-  const onLeave = () => {
-    if (reducedMotion) return;
-    target.current = { rx: 0, ry: 0, tz: 0 };
-    schedule();
-  };
-
-  useEffect(() => {
-    return () => cancelAnimationFrame(raf.current);
-  }, []);
-
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        transform: `perspective(${perspective}px) rotateX(0deg) rotateY(0deg) translateY(0px)`,
-      }}
-      onPointerMove={onMove}
-      onPointerLeave={onLeave}
-    >
-      {children}
-    </div>
+    <>
+      {rings.map((r, ringIdx) => (
+        <div
+          key={ringIdx}
+          className={`ring ${ringIdx === 0 ? "ring1" : "ring2"}`}
+          style={
+            {
+              ["--count"]: r.count,
+              ["--radius"]: r.radius,
+              ["--dur"]: r.dur,
+              ["--tilt"]: r.tilt,
+            } as CSSVars
+          }
+          aria-hidden="true"
+        >
+          {Array.from({ length: r.count }).map((_, i) => (
+            <span
+              key={i}
+              className="orb"
+              style={{ ["--i"]: i } as CSSVars}
+            />
+          ))}
+        </div>
+      ))}
+    </>
   );
 }
 
@@ -212,12 +181,7 @@ export default function Hero() {
   }, [mx, my]);
 
   const roles = useMemo(
-    () => [
-      "برنامه نویس",
-      "توسعه دهنده وب",
-      "Frontend Developer",
-      "React / Next.js",
-    ],
+    () => ["برنامه نویس", "توسعه دهنده وب", "Frontend Developer", "React / Next.js"],
     []
   );
 
@@ -229,6 +193,9 @@ export default function Hero() {
     loop: true,
     enabled: !reducedMotion,
   });
+
+  // اگر SVG شما به صورت کامپوننت (SVGR) ایمپورت می‌شود، این را true کن:
+  const SVG_AS_COMPONENT = false;
 
   return (
     <section
@@ -258,7 +225,6 @@ export default function Hero() {
             <span className="accent"> هم سریع</span>.
           </h1>
 
-          {/* NEW: fixed name + typewriter role */}
           <p className="typeLine MorabaFont" aria-label="Intro">
             <span className="name">مسعود جعفری</span>
             <span className="sep"> — </span>
@@ -291,75 +257,33 @@ export default function Hero() {
           </div>
         </div>
 
+        {/* NEW stage: Image + orbiting 3D-ish dots */}
         <div className="stage" aria-label="Hero visuals">
-          <TiltCard
-            className="floatCard"
-            maxTilt={reducedMotion ? 0 : 10}
-            perspective={950}
-            lift={6}
-          >
-            <div className="floatTop">
-              <span className="mono">build()</span>
-              <span className="muted">→ ship → iterate</span>
+          <div className="solar">
+            <div className="blob" aria-hidden="true" />
+
+            <div className="center" aria-label="Illustration">
+              {SVG_AS_COMPONENT ? (
+               
+                <HeroImage className="heroSvg" aria-hidden="true" />
+              ) : (
+                <img
+                  className="heroSvg"
+                  src={(HeroImage as { src: string }).src}
+                  alt="Code typing illustration"
+                />
+              )}
             </div>
 
-            <div className="statRow">
-              <div className="stat">
-                <div className="statN">+30%</div>
-                <div className="statL">بهبود سرعت</div>
+            {!reducedMotion && <Orbits />}
+            {reducedMotion && (
+              <div className="ringsStatic" aria-hidden="true">
+                <span className="orbStatic" />
+                <span className="orbStatic" />
+                <span className="orbStatic" />
               </div>
-              <div className="stat">
-                <div className="statN">0</div>
-                <div className="statL">باگ UI حیاتی</div>
-              </div>
-              <div className="stat">
-                <div className="statN">A</div>
-                <div className="statL">Core UX</div>
-              </div>
-            </div>
-
-            <div className="divider" />
-
-            <div className="chips">
-              <span className="chip2 mono">TS</span>
-              <span className="chip2 mono">DX</span>
-              <span className="chip2 mono">UI</span>
-              <span className="chip2 mono">SEO</span>
-              <span className="chip2 mono">SSR</span>
-            </div>
-          </TiltCard>
-
-          <TiltCard
-            className="stackCard"
-            maxTilt={reducedMotion ? 0 : 8}
-            perspective={950}
-            lift={5}
-          >
-            <div className="stackHead">
-              <span className="dot" aria-hidden="true" />
-              <span className="stackT">Stack</span>
-            </div>
-            <ul className="stackList">
-              <li>
-                <span className="k">Next.js</span>
-                <span className="v">Routing / SSR / App patterns</span>
-              </li>
-              <li>
-                <span className="k">React</span>
-                <span className="v">State / Components / Hooks</span>
-              </li>
-              <li>
-                <span className="k">TypeScript</span>
-                <span className="v">Types that scale</span>
-              </li>
-              <li>
-                <span className="k">UI</span>
-                <span className="v">Tailwind / CSS / Motion</span>
-              </li>
-            </ul>
-          </TiltCard>
-
-          <div className="blob" aria-hidden="true" />
+            )}
+          </div>
         </div>
       </div>
 
@@ -529,126 +453,124 @@ const css = `
   backdrop-filter: blur(10px);
 }
 
+/* ---- stage ---- */
 .stage{
   position: relative;
   min-height: 360px;
   display: grid;
-  gap: 12px;
-  align-content: center;
+  place-items: center;
+}
+
+.solar{
+  position: relative;
+  width: min(420px, 92vw);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.center{
+  position: relative;
+  width: clamp(220px, 34vw, 340px);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.heroSvg{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 26px 70px rgba(15,23,42,0.20));
 }
 
 .blob{
   position:absolute;
   inset: -40px -60px -40px -60px;
   background:
-    radial-gradient(320px 240px at 22% 28%, rgba(14,165,233,0.28), transparent 62%),
+    radial-gradient(320px 240px at var(--glowX) var(--glowY), rgba(14,165,233,0.28), transparent 62%),
     radial-gradient(340px 260px at 78% 42%, rgba(99,102,241,0.26), transparent 62%),
     radial-gradient(340px 280px at 55% 82%, rgba(16,185,129,0.20), transparent 62%);
   filter: blur(18px);
-  opacity: 0.75;
+  opacity: 0.78;
   z-index: 0;
 }
 
-.floatCard, .stackCard{
-  z-index: 1;
-  border-radius: 22px;
-  border: 1px solid rgba(15,23,42,0.12);
-  background: rgba(255,255,255,0.62);
-  box-shadow: 0 36px 110px rgba(15,23,42,0.10);
-  backdrop-filter: blur(14px);
-  padding: 16px 16px 14px;
+/* ---- 3D-ish orbit rings ---- */
+.ring{
+  position: absolute;
+  inset: 0;
   transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 1;
+  transform: perspective(900px) rotateX(var(--tilt)) rotateZ(0deg);
+  animation: spin var(--dur) linear infinite;
   will-change: transform;
-  transition: box-shadow 240ms cubic-bezier(0.4, 0, 0.2, 1), border-color 240ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.floatCard:hover, .stackCard:hover{
-  box-shadow: 0 44px 140px rgba(15,23,42,0.14);
-  border-color: rgba(255,255,255,0.32);
+.ring2{
+  animation-direction: reverse;
+  transform: perspective(900px) rotateX(var(--tilt)) rotateZ(18deg);
 }
 
-.floatTop{
-  display:flex;
-  gap: 10px;
-  align-items: baseline;
-  color: rgba(15,23,42,0.70);
-}
-.muted{ opacity: 0.6; }
-
-.statRow{
-  margin-top: 12px;
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-.stat{
-  border-radius: 16px;
-  padding: 10px 10px;
-  background: rgba(255,255,255,0.55);
-  border: 1px solid rgba(15,23,42,0.10);
-}
-.statN{ font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
-.statL{ margin-top: 2px; font-size: 12px; color: rgba(15,23,42,0.62); }
-
-.divider{ height: 1px; background: rgba(15,23,42,0.10); margin: 12px 0; }
-
-.chips{ display:flex; flex-wrap: wrap; gap: 8px; }
-.chip2{
-  font-size: 12px;
-  padding: 6px 10px;
+.orb{
+  --size: clamp(8px, 1.4vw, 14px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--size);
+  height: var(--size);
   border-radius: 999px;
-  border: 1px solid rgba(15,23,42,0.10);
-  background: rgba(255,255,255,0.62);
-  color: rgba(15,23,42,0.74);
+  transform:
+    rotate(calc((360deg / var(--count)) * var(--i)))
+    translateX(var(--radius))
+    translateZ(22px);
+
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.35) 35%, rgba(79,70,229,0.45));
+  box-shadow:
+    0 0 0 4px rgba(79,70,229,0.10),
+    0 18px 40px rgba(15,23,42,0.18);
 }
 
-.stackHead{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color: rgba(15,23,42,0.78);
-  font-weight: 700;
-}
-.dot{
-  width: 9px; height: 9px; border-radius: 50%;
-  background: linear-gradient(90deg, #4f46e5, #0ea5e9);
-  box-shadow: 0 0 22px rgba(79,70,229,0.22);
+@keyframes spin{
+  to{
+    transform: perspective(900px) rotateX(var(--tilt)) rotateZ(360deg);
+  }
 }
 
-.stackList{
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
-  display:flex;
-  flex-direction: column;
-  gap: 8px;
+/* fallback ساده در reduce motion */
+.ringsStatic{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
-.stackList li{
-  display:grid;
-  grid-template-columns: 110px 1fr;
-  gap: 10px;
-  align-items: baseline;
-  padding: 9px 10px;
-  border-radius: 14px;
-  border: 1px solid rgba(15,23,42,0.08);
-  background: rgba(255,255,255,0.50);
+.orbStatic{
+  position: absolute;
+  width: 12px; height: 12px; border-radius: 999px;
+  background: rgba(79,70,229,0.35);
+  box-shadow: 0 14px 40px rgba(15,23,42,0.18);
 }
-.k{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: rgba(15,23,42,0.88); }
-.v{ color: rgba(15,23,42,0.62); font-size: 13px; }
+.orbStatic:nth-child(1){ left: 12%; top: 46%; }
+.orbStatic:nth-child(2){ left: 76%; top: 20%; }
+.orbStatic:nth-child(3){ left: 84%; top: 72%; }
 
+/* responsive */
 @media (max-width: 960px){
   .container{ grid-template-columns: 1fr; }
-  .stage{ min-height: auto; }
+  .stage{ min-height: auto; margin-top: 10px; }
 }
 @media (max-width: 520px){
   .badge{ gap: 8px; }
   .bTxt{ display:none; }
-  .statRow{ grid-template-columns: 1fr; }
-  .stackList li{ grid-template-columns: 88px 1fr; }
 }
+
+/* Respect user motion preferences */
 @media (prefers-reduced-motion: reduce){
-  .floatCard, .stackCard{ transition:none; }
   .btn{ transition:none; }
   .typeLine .caret{ animation:none; }
+  .ring{ animation: none; }
 }
 `;
