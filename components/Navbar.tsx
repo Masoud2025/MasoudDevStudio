@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Logo from "../public/icons/MainLogo.png";
 import GithubLogo from "../public/icons/github.svg";
@@ -11,6 +11,10 @@ import Linkedin from "../public/icons/linkedin.svg";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Hide/show on scroll
+  const [hideOnScroll, setHideOnScroll] = useState(false);
+  const lastY = useRef(0);
 
   const navLinks = [
     { href: "/#home", label: "خانه" },
@@ -27,18 +31,60 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  useEffect(() => {
+    lastY.current = window.scrollY;
+
+    const THRESHOLD = 8; // prevents jitter
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const diff = y - lastY.current;
+
+      // Always show near top
+      if (y < 10) {
+        setHideOnScroll(false);
+        lastY.current = y;
+        return;
+      }
+
+      // Ignore tiny deltas
+      if (Math.abs(diff) < THRESHOLD) return;
+
+      if (diff > 0) {
+        // scrolling down
+        setHideOnScroll(true);
+      } else {
+        // scrolling up
+        setHideOnScroll(false);
+      }
+
+      lastY.current = y;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const toggleMenu = () => setMenuOpen((v) => !v);
   const closeMenu = () => setMenuOpen(false);
 
+  // If mobile menu is open, keep navbar visible
+  const shouldHide = hideOnScroll && !menuOpen;
+
   return (
-    <header className="fixed inset-x-0 top-3 z-50">
+    <motion.header
+      className="fixed inset-x-0 top-3 z-50"
+      initial={false}
+      animate={shouldHide ? { y: -90, opacity: 0 } : { y: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    >
       {/* Glass container */}
       <div className="mx-auto max-w-6xl px-3">
         <nav
           className="
             relative flex items-center justify-between
             rounded-2xl px-4 py-2
-            bg-white/10 backdrop-blur-xl
+            bg-white/20 backdrop-blur-xl
             border border-white/20
             shadow-[0_10px_30px_rgba(0,0,0,0.12)]
           "
@@ -46,7 +92,7 @@ export default function Navbar() {
           {/* subtle gradient overlay to look premium */}
           <div
             className="pointer-events-none absolute inset-0 rounded-2xl
-            bg-gradient-to-b from-white/20 to-white/5"
+            bg-gradient-to-b from-white/20 to-white/5 "
           />
 
           {/* Left: social */}
@@ -162,7 +208,7 @@ export default function Navbar() {
                 className="
                   relative z-50 md:hidden mt-3
                   overflow-hidden rounded-2xl
-                  bg-white/10 backdrop-blur-xl
+                  bg-white backdrop-blur-xl
                   border border-white/20
                   shadow-[0_10px_30px_rgba(0,0,0,0.12)]
                 "
@@ -213,6 +259,6 @@ export default function Navbar() {
           )}
         </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 }

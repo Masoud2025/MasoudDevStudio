@@ -376,11 +376,11 @@ const css = `
   position: relative;
   padding: 70px 16px 90px;
   overflow: hidden;
-  background:
-    radial-gradient(900px 700px at 18% 20%, rgba(99,102,241,0.10), transparent 60%),
-    radial-gradient(900px 700px at 78% 36%, rgba(14,165,233,0.10), transparent 60%),
-    radial-gradient(900px 700px at 50% 92%, rgba(16,185,129,0.08), transparent 60%),
-    linear-gradient(180deg, #ffffff, #f7f9ff 55%, #ffffff);
+  // background:
+  //   radial-gradient(900px 700px at 18% 20%, rgba(99,102,241,0.10), transparent 60%),
+  //   radial-gradient(900px 700px at 78% 36%, rgba(14,165,233,0.10), transparent 60%),
+  //   radial-gradient(900px 700px at 50% 92%, rgba(16,185,129,0.08), transparent 60%),
+  //   linear-gradient(180deg, #ffffff, #f7f9ff 55%, #ffffff);
   color: rgba(15,23,42,0.92);
 }
 

@@ -27,6 +27,70 @@ function usePrefersReducedMotion() {
 const clamp = (n: number, min: number, max: number) =>
   Math.min(max, Math.max(min, n));
 
+function useTypewriter({
+  words,
+  typeSpeed = 70,
+  deleteSpeed = 40,
+  holdMs = 900,
+  loop = true,
+  enabled = true,
+}: {
+  words: string[];
+  typeSpeed?: number;
+  deleteSpeed?: number;
+  holdMs?: number;
+  loop?: boolean;
+  enabled?: boolean;
+}) {
+  const [index, setIndex] = useState(0);
+  const [sub, setSub] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  const current = words[index] ?? "";
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    // finished typing current word -> hold, then start deleting
+    if (!deleting && sub === current.length) {
+      const t = window.setTimeout(() => setDeleting(true), holdMs);
+      return () => window.clearTimeout(t);
+    }
+
+    // finished deleting -> next word
+    if (deleting && sub === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDeleting(false);
+      setIndex((i) => {
+        const next = i + 1;
+        return loop ? next % words.length : Math.min(next, words.length - 1);
+      });
+      return;
+    }
+
+    const speed = deleting ? deleteSpeed : typeSpeed;
+    const t = window.setTimeout(() => {
+      setSub((s) => s + (deleting ? -1 : 1));
+    }, speed);
+
+    return () => window.clearTimeout(t);
+  }, [
+    enabled,
+    words,
+    index,
+    current.length,
+    sub,
+    deleting,
+    typeSpeed,
+    deleteSpeed,
+    holdMs,
+    loop,
+  ]);
+
+  const text = enabled ? current.slice(0, sub) : current;
+  return { text, deleting, wordIndex: index };
+}
+
 function TiltCard({
   children,
   className,
@@ -44,7 +108,6 @@ function TiltCard({
   const ref = useRef<HTMLDivElement>(null);
   const raf = useRef<number>(0);
 
-  //   For smooth behavior current value and Target Value 
   const cur = useRef({ rx: 0, ry: 0, tz: 0 });
   const target = useRef({ rx: 0, ry: 0, tz: 0 });
 
@@ -52,7 +115,6 @@ function TiltCard({
     const el = ref.current;
     if (!el) return;
 
-    // easing simple (lerp)
     cur.current.rx += (target.current.rx - cur.current.rx) * 0.14;
     cur.current.ry += (target.current.ry - cur.current.ry) * 0.14;
     cur.current.tz += (target.current.tz - cur.current.tz) * 0.14;
@@ -74,12 +136,11 @@ function TiltCard({
     const x = clamp((e.clientX - r.left) / r.width, 0, 1);
     const y = clamp((e.clientY - r.top) / r.height, 0, 1);
 
-    // Center of the card: 0.5 / 0.5
     const dx = (x - 0.5) * 2; // -1..1
     const dy = (y - 0.5) * 2; // -1..1
 
-    target.current.ry = dx * maxTilt; // Horizontal movement-> rotateY
-    target.current.rx = dy * -maxTilt; // Vertical movement  -> rotateX (reverse for natural view )
+    target.current.ry = dx * maxTilt;
+    target.current.rx = dy * -maxTilt;
     target.current.tz = -lift;
 
     schedule();
@@ -150,6 +211,25 @@ export default function Hero() {
     };
   }, [mx, my]);
 
+  const roles = useMemo(
+    () => [
+      "برنامه نویس",
+      "توسعه دهنده وب",
+      "Frontend Developer",
+      "React / Next.js",
+    ],
+    []
+  );
+
+  const { text: roleText } = useTypewriter({
+    words: roles,
+    typeSpeed: 75,
+    deleteSpeed: 42,
+    holdMs: 900,
+    loop: true,
+    enabled: !reducedMotion,
+  });
+
   return (
     <section
       ref={ref}
@@ -177,6 +257,14 @@ export default function Hero() {
             رابط کاربری که هم زیباست،
             <span className="accent"> هم سریع</span>.
           </h1>
+
+          {/* NEW: fixed name + typewriter role */}
+          <p className="typeLine MorabaFont" aria-label="Intro">
+            <span className="name">مسعود جعفری</span>
+            <span className="sep"> — </span>
+            <span className="role">{reducedMotion ? roles[0] : roleText}</span>
+            {!reducedMotion && <span className="caret" aria-hidden="true" />}
+          </p>
 
           <p className="desc">
             تمرکز روی نتیجه: کامپوننت‌های تمیز، تجربه کاربری روان، و کدی که
@@ -290,11 +378,6 @@ const css = `
   display: grid;
   place-items: center;
   color: rgba(15,23,42,0.92);
-  background:
-    radial-gradient(1100px 780px at var(--glowX) var(--glowY), rgba(99,102,241,0.18), transparent 62%),
-    radial-gradient(900px 680px at calc(var(--glowX) - 18%) calc(var(--glowY) + 14%), rgba(16,185,129,0.12), transparent 60%),
-    radial-gradient(700px 520px at 12% 18%, rgba(14,165,233,0.12), transparent 55%),
-    linear-gradient(180deg, #ffffff, #f7f9ff 55%, #ffffff);
 }
 
 .mesh{
@@ -375,6 +458,28 @@ const css = `
   color: transparent;
 }
 
+.typeLine{
+  margin: 10px 0 0;
+  font-size: 16px;
+  color: rgba(15,23,42,0.70);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.typeLine .name{ font-weight: 800; color: rgba(15,23,42,0.90); }
+.typeLine .sep{ opacity: .5; }
+.typeLine .role{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.typeLine .caret{
+  width: 10px;
+  height: 18px;
+  border-radius: 2px;
+  background: rgba(15,23,42,0.55);
+  display: inline-block;
+  animation: caretBlink 1s steps(2, jump-none) infinite;
+}
+@keyframes caretBlink { 50% { opacity: 0; } }
+
 .desc{
   margin: 0 0 16px;
   max-width: 62ch;
@@ -432,7 +537,6 @@ const css = `
   align-content: center;
 }
 
-/* blob stays behind */
 .blob{
   position:absolute;
   inset: -40px -60px -40px -60px;
@@ -445,7 +549,6 @@ const css = `
   z-index: 0;
 }
 
-/* cards now driven by TiltCard transform */
 .floatCard, .stackCard{
   z-index: 1;
   border-radius: 22px;
@@ -546,5 +649,6 @@ const css = `
 @media (prefers-reduced-motion: reduce){
   .floatCard, .stackCard{ transition:none; }
   .btn{ transition:none; }
+  .typeLine .caret{ animation:none; }
 }
 `;

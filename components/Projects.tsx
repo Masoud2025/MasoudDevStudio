@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Project = {
   id: string;
@@ -32,7 +32,12 @@ const PROJECTS: Project[] = [
     title: "سایت شرکتی آلفا",
     role: "UI + Frontend",
     summary: "وبسایت شرکتی با تمرکز روی اعتمادسازی، معرفی خدمات و CTA واضح.",
-    requirements: ["ریسپانسیو کامل", "RTL تمیز", "ساختار کامپوننتی", "سرعت بالا"],
+    requirements: [
+      "ریسپانسیو کامل",
+      "RTL تمیز",
+      "ساختار کامپوننتی",
+      "سرعت بالا",
+    ],
     challenges: ["کنترل تصاویر قدی", "هماهنگی spacing", "hover بدون لگ"],
     durationDays: 6,
     font: "Vazirmatn",
@@ -200,7 +205,13 @@ function FastImg({
   );
 }
 
-function ProjectCard({ p, onOpen }: { p: Project; onOpen: (p: Project) => void }) {
+function ProjectCard({
+  p,
+  onOpen,
+}: {
+  p: Project;
+  onOpen: (p: Project) => void;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.25, once: true });
 
@@ -229,7 +240,9 @@ function ProjectCard({ p, onOpen }: { p: Project; onOpen: (p: Project) => void }
 
         <div className="techRow">
           {p.tech.slice(0, 6).map((t) => (
-            <span key={t} className="pill">{t}</span>
+            <span key={t} className="pill">
+              {t}
+            </span>
           ))}
         </div>
 
@@ -238,7 +251,12 @@ function ProjectCard({ p, onOpen }: { p: Project; onOpen: (p: Project) => void }
             توضیحات پروژه
           </button>
           {p.demoUrl ? (
-            <a className="btn glass" href={p.demoUrl} target="_blank" rel="noreferrer">
+            <a
+              className="btn glass"
+              href={p.demoUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
               مشاهده دمو آنلاین
             </a>
           ) : (
@@ -252,7 +270,13 @@ function ProjectCard({ p, onOpen }: { p: Project; onOpen: (p: Project) => void }
   );
 }
 
-function ProjectSheet({ project, onClose }: { project: Project | null; onClose: () => void }) {
+function ProjectSheet({
+  project,
+  onClose,
+}: {
+  project: Project | null;
+  onClose: () => void;
+}) {
   useEffect(() => {
     if (!project) return;
     const onKeyDown = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -293,7 +317,9 @@ function ProjectSheet({ project, onClose }: { project: Project | null; onClose: 
                 <h3>{project.title}</h3>
                 <p className="muted">{project.role}</p>
               </div>
-              <button className="closeBtn" onClick={onClose}>بستن</button>
+              <button className="closeBtn" onClick={onClose}>
+                بستن
+              </button>
             </div>
 
             <div className="sheetBody">
@@ -314,14 +340,26 @@ function ProjectSheet({ project, onClose }: { project: Project | null; onClose: 
                   </div>
 
                   <h4>خواسته‌ها</h4>
-                  <ul>{project.requirements.map((x) => <li key={x}>{x}</li>)}</ul>
+                  <ul>
+                    {project.requirements.map((x) => (
+                      <li key={x}>{x}</li>
+                    ))}
+                  </ul>
 
                   <h4>چالش‌ها</h4>
-                  <ul>{project.challenges.map((x) => <li key={x}>{x}</li>)}</ul>
+                  <ul>
+                    {project.challenges.map((x) => (
+                      <li key={x}>{x}</li>
+                    ))}
+                  </ul>
 
                   <h4>تکنولوژی‌ها</h4>
                   <div className="chips2">
-                    {project.tech.map((t) => <span key={t} className="pill">{t}</span>)}
+                    {project.tech.map((t) => (
+                      <span key={t} className="pill">
+                        {t}
+                      </span>
+                    ))}
                   </div>
 
                   <h4>رنگ‌ها</h4>
@@ -337,7 +375,11 @@ function ProjectSheet({ project, onClose }: { project: Project | null; onClose: 
 
                   <h4>اصول رعایت‌شده</h4>
                   <div className="chips2">
-                    {project.principles.map((t) => <span key={t} className="pill">{t}</span>)}
+                    {project.principles.map((t) => (
+                      <span key={t} className="pill">
+                        {t}
+                      </span>
+                    ))}
                   </div>
                 </section>
 
@@ -346,18 +388,29 @@ function ProjectSheet({ project, onClose }: { project: Project | null; onClose: 
                   <div className="gallery">
                     {project.gallery.map((src, i) => (
                       <div className="gItem" key={src + i}>
-                        <FastImg src={src} alt={`${project.title} - ${i + 1}`} className="gImg" />
+                        <FastImg
+                          src={src}
+                          alt={`${project.title} - ${i + 1}`}
+                          className="gImg"
+                        />
                       </div>
                     ))}
                   </div>
 
                   <div className="sheetActions">
                     {project.demoUrl ? (
-                      <a className="btn primary" href={project.demoUrl} target="_blank" rel="noreferrer">
+                      <a
+                        className="btn primary"
+                        href={project.demoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         مشاهده دمو آنلاین
                       </a>
                     ) : null}
-                    <button className="btn glass" onClick={onClose}>بستن</button>
+                    <button className="btn glass" onClick={onClose}>
+                      بستن
+                    </button>
                   </div>
                 </section>
               </div>
@@ -404,7 +457,10 @@ export default function Project() {
       <div className="wrap">
         <div className="head">
           <h2 className="MorabaFont">پروژه‌ها</h2>
-          <p>برای روان شدن، انیمیشن‌ها فقط transform/opacity هستند و عکس‌ها lazy لود می‌شن.</p>
+          <p>
+            برای روان شدن، انیمیشن‌ها فقط transform/opacity هستند و عکس‌ها lazy
+            لود می‌شن.
+          </p>
         </div>
 
         <div className="cards">
@@ -427,11 +483,11 @@ const css = `
   position: relative;
   padding: 70px 16px 90px;
   overflow: hidden;
-  background:
-    radial-gradient(900px 700px at 18% 20%, rgba(99,102,241,0.12), transparent 60%),
-    radial-gradient(900px 700px at 78% 36%, rgba(14,165,233,0.12), transparent 60%),
-    radial-gradient(900px 700px at 50% 92%, rgba(16,185,129,0.10), transparent 60%),
-    linear-gradient(180deg, #ffffff, #f7f9ff 55%, #ffffff);
+  // background:
+  //   radial-gradient(900px 700px at 18% 20%, rgba(99,102,241,0.12), transparent 60%),
+  //   radial-gradient(900px 700px at 78% 36%, rgba(14,165,233,0.12), transparent 60%),
+  //   radial-gradient(900px 700px at 50% 92%, rgba(16,185,129,0.10), transparent 60%),
+  //   linear-gradient(180deg, #ffffff, #f7f9ff 55%, #ffffff);
   color: rgba(15,23,42,0.92);
 }
 

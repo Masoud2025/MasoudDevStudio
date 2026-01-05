@@ -18,7 +18,21 @@
 }
 body {
   font-family: "Anjoman";
+  background-color: #fff;
+
+  /* dots */
+  --dot: rgba(0, 0, 0, 0.18);
+  --gap: 26px; /* distance between dots */
+  --size: 2px; /* dot radius-ish */
+
+  background-image: radial-gradient(
+    circle,
+    var(--dot) var(--size),
+    transparent var(--size)
+  );
+  background-size: var(--gap) var(--gap);
 }
+
 .MorabaFont {
   font-family: "Morabba";
 }
@@ -32,3 +46,4 @@ body {
 }
 
 /*  */
+
