@@ -147,8 +147,8 @@ export default function Hero() {
             <a className="btn glass" href="#contact">
               شروع همکاری
             </a>
-            <a className="btn link" href="#about" aria-label="About">
-              بیشتر درباره من →
+            <a className="btn link glass" href="#about" aria-label="About">
+             دانلود رزومه
             </a>
           </div>
 
