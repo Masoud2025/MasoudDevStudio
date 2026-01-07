@@ -120,7 +120,6 @@ export default function Hero() {
           <div className="badge">
             <span className="ping" aria-hidden="true" />
             <span className="bTxt">OPEN TO WORK</span>
-            
           </div>
 
           <h1 className="title MorabaFont">
@@ -148,7 +147,7 @@ export default function Hero() {
               شروع همکاری
             </a>
             <a className="btn link glass" href="#about" aria-label="About">
-             دانلود رزومه
+              دانلود رزومه
             </a>
           </div>
 
@@ -162,14 +161,13 @@ export default function Hero() {
 
         <div className="stage" aria-label="Hero visuals">
           <div className="solar">
-            {/* blob + ringsStatic حذف شدند */}
-
             <div className="center" aria-label="Illustration">
               <Image
                 className="heroSvg rounded-4xl"
                 src={HeroImage}
                 alt="Code typing illustration"
                 priority
+                sizes="(max-width: 960px) 92vw, 420px"
               />
             </div>
           </div>
@@ -255,8 +253,6 @@ const css = `
   background: #10b981;
   box-shadow: 0 0 0 5px rgba(16,185,129,0.16), 0 0 26px rgba(16,185,129,0.32);
 }
-.bSep{ opacity: .45; }
-.mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 .title{
   margin: 18px 0 10px;
@@ -368,31 +364,58 @@ const css = `
   z-index: 2;
 }
 
-/* حذف کامل سایه دور عکس */
 .heroSvg{
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: none; /* drop-shadow حذف شد [web:65] */
+  filter: none;
 }
 
 /* responsive */
 @media (max-width: 960px){
-  .container{ grid-template-columns: 1fr; }
-  .stage{ min-height: auto; margin-top: 10px; }
+  .container{
+    grid-template-columns: 1fr;
+    gap: 12px; /* فاصله بین ستون‌ها/ردیف‌ها کمتر شود */ /* gap controls gutters */ 
+  }
 
-  /* اگر همین‌ها هم “کادر” می‌سازند، می‌تونی خاموش کنی */
-  /* .mesh, .grid, .noise { display: none; } */
+  .copy{ padding: 0; }
 
-  .badge{ box-shadow: none; }  /* box-shadow: none [web:57] */
+  .title{ margin: 14px 0 8px; }
+  .desc{ margin: 0 0 10px; }
+
+  .ctaRow{
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .signals{
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .stage{
+    min-height: auto;
+    margin-top: 6px;
+  }
+
+  /* بزرگ‌تر شدن تصویر در موبایل */
+  .center{
+    width: clamp(300px, 78vw, 420px);
+  }
+
+  .badge{ box-shadow: none; }
   .ping{ box-shadow: none; }
   .glass{ backdrop-filter: none; }
   .pill{ backdrop-filter: none; }
 }
 
 @media (max-width: 520px){
-  .badge{ gap: 8px; }
+  .badge{ gap: 8px; padding: 8px 12px; }
   .bTxt{ display:none; }
+
+  /* اگر خیلی فشرده می‌خوای */
+  .ctaRow{ gap: 5px; }
+  .signals{ gap: 5px; }
 }
 
 @media (prefers-reduced-motion: reduce){
