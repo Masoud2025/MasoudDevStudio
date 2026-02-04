@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import Hero from "../components/Hero";
 import Navbar from "../components/Navbar";
 import Project from "../components/Projects";
-import ScrollProgressBar from "../components/ScrollProgressBar";
+import ScrollProgressBar from "../components/ScrollToTopWithProgress";
 
 export default function Home() {
   return (
@@ -16,8 +16,9 @@ export default function Home() {
       <Contact />
       <Footer />
       <ConsoleBanner />
-      <ScrollProgressBar />
-      <BackToTopTopBar />
+      <ScrollProgressBar/>
+      {/* <ScrollProgressBar /> */}
+      {/* <BackToTopTopBar /> */}
     </div>
   );
 }
