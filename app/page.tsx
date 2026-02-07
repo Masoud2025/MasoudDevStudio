@@ -1,4 +1,4 @@
-import BackToTopTopBar from "../components/BackToTopTopBar";
+// import BackToTopTopBar from "../components/BackToTopTopBar";
 import ConsoleBanner from "../components/ConsoleBanner";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
@@ -14,11 +14,10 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Project />
-
       <Contact />
       <Footer />
       <ConsoleBanner />
-      <ScrollProgressBar/>
+      <ScrollProgressBar />
       {/* <ScrollProgressBar /> */}
       {/* <BackToTopTopBar /> */}
     </div>
