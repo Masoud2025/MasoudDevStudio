@@ -3,10 +3,10 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import ketaback from "../public/Ketabak.png";
-import Shopimage from '../public/onlineShopUI.png';
 import cub3d from "../public/3D.png";
 import hastiva from "../public/hastiva.png";
+import ketaback from "../public/Ketabak.png";
+import Shopimage from "../public/onlineShopUI.png";
 
 const projects = [
   {
@@ -28,7 +28,7 @@ const projects = [
     id: "2",
     title: "کتابک",
     image: ketaback,
-    preview: "https://example.com",
+    preview: "https://ketabak-khaki.vercel.app/",
     tech: {
       font: "Vazirmatn",
       architecture: "Feature-Sliced Design",
@@ -72,7 +72,9 @@ const projects = [
 ];
 
 export default function Projects() {
-  const [activeProject, setActiveProject] = useState<(typeof projects)[0] | null>(null);
+  const [activeProject, setActiveProject] = useState<
+    (typeof projects)[0] | null
+  >(null);
 
   return (
     <>
@@ -86,7 +88,10 @@ export default function Projects() {
 
       <AnimatePresence>
         {activeProject && (
-          <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
+          <ProjectModal
+            project={activeProject}
+            onClose={() => setActiveProject(null)}
+          />
         )}
       </AnimatePresence>
 
@@ -134,7 +139,9 @@ function HoverCard({
       />
 
       <div style={{ padding: "15px 20px" }}>
-        <h3 style={{ fontSize: "20px", marginBottom: "10px" }}>{project.title}</h3>
+        <h3 style={{ fontSize: "20px", marginBottom: "10px" }}>
+          {project.title}
+        </h3>
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={() => window.open(project.preview, "_blank")}
@@ -223,15 +230,24 @@ function ProjectModal({
           ✕
         </button>
 
-        <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>{project.title}</h2>
+        <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>
+          {project.title}
+        </h2>
         <p style={{ marginBottom: "30px", lineHeight: 1.6 }}>
-          این پروژه با معماری <strong>{project.tech.architecture}</strong> توسعه یافته و از
-          الگوی <strong>{project.tech.pattern}</strong> استفاده می‌کند.
+          این پروژه با معماری <strong>{project.tech.architecture}</strong> توسعه
+          یافته و از الگوی <strong>{project.tech.pattern}</strong> استفاده
+          می‌کند.
           <br />
           فونت اصلی پروژه: <strong>{project.tech.font}</strong>
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "20px",
+          }}
+        >
           {project.gallery.map((img, i) => (
             <motion.img
               key={i}
