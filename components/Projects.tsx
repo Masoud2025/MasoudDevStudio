@@ -1,158 +1,254 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import ketaback from "../public/Ketabak.png";
+import Shopimage from '../public/onlineShopUI.png';
+import cub3d from "../public/3D.png";
+import hastiva from "../public/hastiva.png";
 
 const projects = [
   {
     id: "1",
     title: "سایت شرکتی",
-    description: "طراحی مدرن، ریسپانسیو و سریع برای معرفی خدمات.",
-    image: "https://picsum.photos/600/900?random=1",
-    bgColor: "#fef3c7",
-    borderColor: "#fbbf24",
+    image: Shopimage,
+    preview: "https://masoud-jafari.vercel.app/showcase/demo1",
+    tech: {
+      font: "IRANSansX",
+      architecture: "Atomic Design",
+      pattern: "Component-Based Architecture",
+    },
+    gallery: [
+      "https://picsum.photos/800/600?random=11",
+      "https://picsum.photos/800/600?random=12",
+    ],
   },
   {
     id: "2",
-    title: "لندینگ SaaS",
-    description: "صفحه فروش محصول با تمرکز روی تبدیل کاربر.",
-    image: "https://picsum.photos/600/900?random=2",
-    bgColor: "#dbeafe",
-    borderColor: "#3b82f6",
+    title: "کتابک",
+    image: ketaback,
+    preview: "https://example.com",
+    tech: {
+      font: "Vazirmatn",
+      architecture: "Feature-Sliced Design",
+      pattern: "Modular Monolith",
+    },
+    gallery: [
+      "https://picsum.photos/800/600?random=21",
+      "https://picsum.photos/800/600?random=22",
+    ],
   },
   {
     id: "3",
-    title: "فروشگاه آنلاین",
-    description: "UI تمیز با تجربه خرید ساده و سریع.",
-    image: "https://picsum.photos/600/900?random=3",
-    bgColor: "#dcfce7",
-    borderColor: "#22c55e",
+    title: "3بعدی ",
+    image: cub3d,
+    preview: "https://masoud-jafari.vercel.app/",
+    tech: {
+      font: "IRANYekan",
+      architecture: "MVC",
+      pattern: "Layered Architecture",
+    },
+    gallery: [
+      "https://picsum.photos/800/600?random=31",
+      "https://picsum.photos/800/600?random=32",
+    ],
   },
   {
     id: "4",
-    title: "داشبورد مدیریتی",
-    description: "نمایش داده‌ها با ساختار مقیاس‌پذیر.",
-    image: "https://picsum.photos/600/900?random=4",
-    bgColor: "#ede9fe",
-    borderColor: "#7c3aed",
+    title: "هشتیوا",
+    image: hastiva,
+    preview: "https://hashtiva.vercel.app/",
+    tech: {
+      font: "Inter",
+      architecture: "Component Driven",
+      pattern: "SPA Architecture",
+    },
+    gallery: [
+      "https://picsum.photos/800/600?random=41",
+      "https://picsum.photos/800/600?random=42",
+    ],
   },
 ];
 
 export default function Projects() {
+  const [activeProject, setActiveProject] = useState<(typeof projects)[0] | null>(null);
+
   return (
-    <section dir="rtl" style={{ padding: "80px 20px" }}>
-      <div className="grid-container">
-        {projects.map((p) => (
-          <HoverCard key={p.id} project={p} />
-        ))}
-      </div>
+    <>
+      <section dir="rtl" style={{ padding: "80px 20px" }}>
+        <div className="grid-container">
+          {projects.map((p) => (
+            <HoverCard key={p.id} project={p} onOpen={setActiveProject} />
+          ))}
+        </div>
+      </section>
+
+      <AnimatePresence>
+        {activeProject && (
+          <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
+        )}
+      </AnimatePresence>
 
       <style jsx>{`
         .grid-container {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 28px;
-          max-width: 1400px;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 30px;
+          max-width: 1600px;
           margin: 0 auto;
         }
-
-        @media (max-width: 1200px) {
-          .grid-container {
-            grid-template-columns: repeat(3, 1fr);
-          }
-        }
-
-        @media (max-width: 900px) {
-          .grid-container {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-
-        @media (max-width: 600px) {
-          .grid-container {
-            grid-template-columns: 1fr;
-          }
-        }
       `}</style>
-    </section>
+    </>
   );
 }
 
-function HoverCard({ project }: { project: typeof projects[0] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const y = useMotionValue(0);
-  const translateY = useTransform(y, (v) => `${v}%`);
-
-  const handleMouseEnter = () => y.set(-30);
-  const handleMouseLeave = () => y.set(0);
-
+function HoverCard({
+  project,
+  onOpen,
+}: {
+  project: (typeof projects)[0];
+  onOpen: any;
+}) {
   return (
     <motion.div
-      ref={ref}
+      whileHover={{ y: -8, scale: 1.03 }}
+      transition={{ duration: 0.3 }}
       style={{
-        borderRadius: "22px",
-        overflow: "hidden",
-        background: project.bgColor,
-        border: `2px solid ${project.borderColor}`,
-        boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
-        position: "relative",
         cursor: "pointer",
-        height: "500px",
-        display: "flex",
-        flexDirection: "column",
+        borderRadius: "20px",
+        overflow: "hidden",
+        boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+        position: "relative",
       }}
-      onHoverStart={handleMouseEnter}
-      onHoverEnd={handleMouseLeave}
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 150 }}
     >
-      {/* عکس */}
-      <div
+      <img
+        src={project.image.src}
+        alt={project.title}
         style={{
+          width: "100%",
+          height: "280px",
+          objectFit: "cover",
+          display: "block",
+        }}
+      />
+
+      <div style={{ padding: "15px 20px" }}>
+        <h3 style={{ fontSize: "20px", marginBottom: "10px" }}>{project.title}</h3>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={() => window.open(project.preview, "_blank")}
+            style={{
+              flex: 1,
+              padding: "8px",
+              borderRadius: "12px",
+              border: "1px solid #000",
+              background: "transparent",
+              cursor: "pointer",
+              fontWeight: 500,
+            }}
+          >
+            پیش‌نمایش
+          </button>
+          <button
+            onClick={() => onOpen(project)}
+            style={{
+              flex: 1,
+              padding: "8px",
+              borderRadius: "12px",
+              border: "none",
+              background: "#000",
+              color: "#fff",
+              cursor: "pointer",
+              fontWeight: 500,
+            }}
+          >
+            جزئیات
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function ProjectModal({
+  project,
+  onClose,
+}: {
+  project: (typeof projects)[0];
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: "fixed",
+        inset: 0,
+        overflowY: "auto",
+        zIndex: 1000,
+        padding: "60px 20px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+      }}
+    >
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.95 }}
+        style={{
+          background: "#fff",
+          borderRadius: "20px",
+          padding: "40px 30px",
+          maxWidth: "900px",
+          width: "100%",
+          boxShadow: "0 15px 40px rgba(0,0,0,0.2)",
           position: "relative",
-          height: "300px",
-          overflow: "hidden",
         }}
       >
-        <motion.img
-          src={project.image}
-          alt={project.title}
-          style={{
-            width: "100%",
-            height: "120%",
-            objectFit: "cover",
-            objectPosition: "top",
-            y: translateY,
-            transition: "transform 2s ease",
-          }}
-        />
-      </div>
-
-      {/* متن */}
-      <div style={{ padding: "16px", flex: 1, position: "relative" }}>
-        <h3 style={{ margin: "0 0 6px", fontSize: "18px" }}>{project.title}</h3>
-        <p style={{ margin: 0, color: "#475569", fontSize: "14px", lineHeight: 1.6 }}>
-          {project.description}
-        </p>
-
-        {/* دکمه کوچک روی متن */}
         <button
+          onClick={onClose}
           style={{
             position: "absolute",
-            bottom: "16px",
-            left: "16px",
-            padding: "8px 12px",
-            borderRadius: "12px",
-            background: project.borderColor,
-            color: "#fff",
+            top: "20px",
+            right: "20px",
             border: "none",
+            background: "transparent",
+            fontSize: "22px",
             cursor: "pointer",
-            fontSize: "13px",
           }}
         >
-          پیش‌نمایش
+          ✕
         </button>
-      </div>
+
+        <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>{project.title}</h2>
+        <p style={{ marginBottom: "30px", lineHeight: 1.6 }}>
+          این پروژه با معماری <strong>{project.tech.architecture}</strong> توسعه یافته و از
+          الگوی <strong>{project.tech.pattern}</strong> استفاده می‌کند.
+          <br />
+          فونت اصلی پروژه: <strong>{project.tech.font}</strong>
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px" }}>
+          {project.gallery.map((img, i) => (
+            <motion.img
+              key={i}
+              src={img}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                width: "100%",
+                height: "180px",
+                objectFit: "cover",
+                borderRadius: "16px",
+                cursor: "pointer",
+              }}
+            />
+          ))}
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
