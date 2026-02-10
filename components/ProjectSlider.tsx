@@ -42,6 +42,15 @@ export default function ProjectSlider() {
   const repeatedRow1 = [...row1Images, ...row1Images];
   const repeatedRow2 = [...row2Images, ...row2Images];
 
+  // SSR-safe: ذخیره وضعیت دسکتاپ
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const checkWidth = () => setIsDesktop(window.innerWidth >= 768);
+    checkWidth();
+    window.addEventListener("resize", checkWidth);
+    return () => window.removeEventListener("resize", checkWidth);
+  }, []);
+
   // محاسبه عرض کارت‌ها
   useEffect(() => {
     const calcWidth = () => {
@@ -123,15 +132,15 @@ export default function ProjectSlider() {
         className="min-w-[350px] sm:min-w-[450px] md:min-w-[550px] lg:min-w-[650px]
                    h-[250px] sm:h-[320px] md:h-[400px] lg:h-[480px]
                    rounded-3xl overflow-hidden flex-shrink-0 shadow-2xl relative cursor-pointer"
-        whileHover={{ scale: window.innerWidth >= 768 ? 1.05 : 1 }}
+        whileHover={{ scale: isDesktop ? 1.05 : 1 }}
         onHoverStart={() => {
-          if (window.innerWidth >= 768) {
+          if (isDesktop) {
             if (row === 1) row1Paused.current = true;
             if (row === 2) row2Paused.current = true;
           }
         }}
         onHoverEnd={() => {
-          if (window.innerWidth >= 768) {
+          if (isDesktop) {
             if (row === 1) row1Paused.current = false;
             if (row === 2) row2Paused.current = false;
           }
